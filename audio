@@ -1,0 +1,29 @@
+#!/bin/sh
+arg1=$1
+arg2=$2
+defVol=0.4
+if [ "$arg1" = "mute" ]; then
+wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.0
+exit 0
+fi
+if [ "$arg1" = "setDefault" ]; then
+read -p "What is your ideal default volume (0-1 in most circumstances): " defVol
+mkdir ~/.config/audioSet 2> /dev/null
+echo $defVol > ~/.config/audioSet/.audioSet
+exit 0
+fi
+if [ "$arg1" = "set" ]; then
+    if [ "$arg2" = "" ]; then
+        default=$(cat ~/.config/audioSet/.audioSet)
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ $default
+        exit 0
+    else
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ $arg2
+        exit 0
+    fi
+    fi
+if [ "$arg1" = "get" ]; then
+    wpctl get-volume @DEFAULT_AUDIO_SINK@
+    exit 0
+fi
+    echo -e "usage: audio [mute,set x.x, get ,setDefault]\n Options: \n mute - mutes current audio stream\n set - sets current audio stream volume to default or arg2\n get - gets current audio stream volume\n setDefault - sets default volume in config file, allowing the use of $ audio set"
